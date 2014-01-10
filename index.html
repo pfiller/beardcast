@@ -347,7 +347,7 @@ table {
     $(".today-banner strong").text("“" + beard.name + "”");
     $(".todays-weather h2").html(temp.F+"&deg;")
     console.log("/beards/"+ beard.image +".jpg")
-    $(".beard-image").attr("src","/beards/"+ beard.image +".jpg")
+    $(".beard-image").attr("src","beards/"+ beard.image +".jpg")
 
     futureDays = data.daily.data;
     now = new Date()
