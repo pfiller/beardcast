@@ -1,0 +1,373 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <style type="text/css">
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1.25;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+
+    body {
+      background: #ededed;
+      font-family: 'helvetica neue';
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      background: url(header.png);
+      background-size: 100% 112px;
+      height: 112px;
+      overflow: hidden;
+      text-indent: 100%;
+      margin: 0; padding: 0;
+      width: 100%;
+      max-width: 450px;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 3;
+    }
+    p {
+      font-size: 1.4em;
+      text-align: center;
+      width: 100%;
+    }
+    p > em {
+      font-size: .75em;
+      color: #999;
+      font-style: normal;
+    }
+    section {
+      margin: 0;
+    }
+    #getit {
+      padding-top: 150px;
+    }
+    #weather {
+      padding-top: 110px;
+    }
+    article {
+      background: white;
+      max-width: 450px;
+      min-width: 320px;
+      min-height: 100%;
+      margin: 0; padding: 0;
+    }
+    #loader {
+      width: 150px;
+      height: 185px;
+      background: url(loader.png);
+      background-size: 150px 185px;
+      margin: 0 auto;
+    }
+    #weather {
+      display: none;
+    }
+    table {
+      background-color: #e9e3e0;
+      border-collapse: collapse;
+      font-size: 1.25em;
+      margin: 0 auto 0;
+      width: 100%;
+    }
+    table td {
+      border-top: 1px solid white;
+      padding: 5px;
+    }
+    .future-weather .day {
+      text-align: center;
+      width: 60px;
+    }
+    .future-weather .descriptor {
+      text-align: center;
+    }
+    .future-weather .temps {
+      text-align: center;
+      width: 75px;
+    }
+    .future-weather .temps em {
+      font-style: normal;
+      font-weight: 500;
+    }
+    .today-banner {
+      margin: 40px 0 0;
+    }
+    .today-banner > strong {
+      font-size: 1.5em;
+    }
+    .todays-weather {
+      margin: 0 auto;
+      width: 275px;
+      height: 185px;
+      margin-bottom: 25px;
+    }
+    .todays-weather > h2 {
+      float: left;
+      font-size: 5em;
+      font-weight: normal;
+      margin: 40px 0 0;
+      padding: 0;
+      display: block;
+    }
+    .todays-weather > p {
+      clear: both;
+    }
+    .beard-face-container {
+      float: right;
+      text-align: center;
+      overflow: hidden;
+      width: 50%;
+    }
+    .beard-face-container > img {
+      margin: 0 auto;
+    }
+    .birthday {
+      margin-top: 40px;
+      padding-bottom: 30px;
+    }
+    .birthday a { color: #999; }
+
+    @media (max-width: 450px) {
+      body {
+        background-color: red;
+      }
+      article {
+        min-height: 120%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article>
+    <header>
+      <h1>Beardcast</h1>
+    </header>
+    <section id="getit">
+      <div id="loader" class="beard-image"></div>
+      <p>
+        Where you at?<br />
+        <em>Be sure to allow Beardcast<br />to access your location!</em>
+      </p>
+    </section>
+    <section id="weather">
+      <p class="today-banner">
+        Today calls for the<br />
+        <strong></strong>
+      </p>
+      <div class="todays-weather">
+        <h2>41&deg;</h2>
+        <div class="beard-face-container">
+          <img width="150" height="185" src="loader.png" class="beard-image" />
+        </div>
+      </div>
+      <table class="future-weather"></table>
+      <p class="birthday">
+        Happy Birthday Paul!<br />
+        <em>Powered by <a href="http://forecast.io">Forecast</a></em>
+      </p>
+    </section>
+  </article>
+  <script src="jquery.2.0.3.js"></script>
+  <script src="underscore.js"></script>
+  <script>
+
+    var weatherData, rotateTimeout, rotate = 0;
+
+    function rotateBeard(){
+      if(rotate === 0) rotate = 15;
+      else if(rotate === 15) rotate = -15;
+      else rotate = 0;
+
+      $(".beard-image").css({
+        transform: 'rotate('+rotate+'deg)'
+      });
+      rotateTimeout = setTimeout(rotateBeard, 500)
+    }
+
+    rotateBeard();
+
+
+  navigator.geolocation.getCurrentPosition(coordinatesLoaded, coordinatesFailed)
+
+  var beards = [
+    {
+      'name': 'Baby’s Bottom',
+      'image': 'paul_01',
+      'tempMin': 90,
+      'tempMax': 1000
+    },
+    {
+      'name': 'Fake Cop Stache',
+      'image': 'paul_10',
+      'tempMin': 80,
+      'tempMax': 90
+    },
+    {
+      'name': 'Bearded Lady',
+      'image': 'paul_03',
+      'tempMin': 60,
+      'tempMax': 80
+    },
+    {
+      'name': 'Neckbeard Hacker',
+      'image': 'paul_04',
+      'tempMin': 60,
+      'tempMax': 70
+    },
+    {
+      'name': 'Urban Beekeeper',
+      'image': 'paul_02',
+      'tempMin': 50,
+      'tempMax': 60
+    },
+    {
+      'name': 'Grumpy Sea Captain',
+      'image': 'paul_08',
+      'tempMin': 40,
+      'tempMax': 50
+    },
+    {
+      'name': 'Hipster Fisherman',
+      'image': 'paul_06',
+      'tempMin': 30,
+      'tempMax': 40
+    },
+    {
+      'name': 'Pedantic Cheesemonger',
+      'image': 'paul_05',
+      'tempMin': 20,
+      'tempMax': 30
+    },
+    {
+      'name': 'Retired Bus Driver',
+      'image': 'paul_09',
+      'tempMin': 10,
+      'tempMax': 20
+    },
+    {
+      'name': 'Disgruntled Barista',
+      'image': 'paul_07',
+      'tempMin': -900,
+      'tempMax': 10
+    }
+  ]
+
+  function getBeard(temp){
+    return _.find(beards, function(beard){ return temp <= beard.tempMax && temp >= beard.tempMin; })
+  }
+
+  function coordinatesLoaded(coord){
+    console.dir(coord);
+    $("#getit p").html("Looking up your weather.<br /><em>Now is a good time to play<br />with your beard hair.</em>")
+    getWeather(coord.coords.latitude, coord.coords.longitude)
+  }
+
+  function coordinatesFailed(error){
+    $("#getit p").html("Couldn't find you.<br /><em>Try enabling location services<br />for this URL and try again.</em>")
+    clearTimeout(rotateTimeout)
+  }
+
+  function tempFormat(temp){
+    newtemps = {
+      'F': Math.round(temp),
+      'C': Math.round((temp - 32)*5/9)
+    }
+    return newtemps;
+  }
+
+  function getWeather(lat,lon){
+    var xhr = $.ajax("https://api.forecast.io/forecast/efb273ea82aa8cdb55e3b6bc883465f3/"+lat+","+lon, {
+      type: "GET",
+      dataType: "jsonp"
+    })
+
+    xhr.done(function(data, textStatus, jqXHR){
+      weatherData = data;
+      $("#getit").fadeOut("fast", showWeather);
+    });
+  }
+
+  function showWeather(){
+    $("#getit").remove();
+    $("#weather").show();
+    data = weatherData;
+    console.dir(data)
+
+    temp = tempFormat(data.currently.temperature);
+    beard = getBeard(temp.F)
+
+    $(".today-banner strong").text("“" + beard.name + "”");
+    $(".todays-weather h2").html(temp.F+"&deg;")
+    console.log("/beards/"+ beard.image +".jpg")
+    $(".beard-image").attr("src","/beards/"+ beard.image +".jpg")
+
+    futureDays = data.daily.data;
+    now = new Date()
+
+    days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+    var rows = ""
+    for(var i=0; i<futureDays.length; i+=1){
+      day = futureDays[i];
+      day.max = tempFormat(day.temperatureMax);
+      day.min = tempFormat(day.temperatureMin);
+      day.date = new Date(day.time*1000)
+      beard = getBeard(day.max.F)
+      console.log(day.date.toDateString(),day.max.F + "/" + day.min.F, beard.name)
+
+      rows += "<tr>"
+      rows += "<td class=\"day\">"+days[day.date.getDay()]+"</td>"
+      rows += "<td class=\"descriptor\">"+beard.name+"</td>"
+      rows += "<td class=\"temps\"><em>"+day.max.F + "</em> / " + day.min.F+"</td>"
+      rows += "</tr>"
+    }
+    $("table").html(rows);
+  }
+  </script>
+
+</body>
+</html>
